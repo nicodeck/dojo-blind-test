@@ -18,7 +18,7 @@ async function generateSpotifyClient() {
   }
 }
 
-function generateType(typeName, typeSchema) {  
+function generateType(typeName, typeSchema) {
   console.log(`Generating type ${typeName}...`);
 
   const generatedCode = getGeneratedCode(typeName, typeSchema);
@@ -38,11 +38,25 @@ function getGeneratedType(typeSchema) {
   // TO DO: Generate typescript code from schema
   switch (schemaType) {
     case "number":
+      return "number";
     case "integer":
+      return "number";
     case "string":
+      return "string";
     case "boolean":
+      return "boolean";
     case "array":
+      return "array"
     case "object":
+      if (!("properties" in typeSchema)) {
+        return "object"
+      }
+      const result = Object.entries(typeSchema.properties).reduce((acc, [key, value]) => {
+        const entry = `${key}: ${getGeneratedType(value)}`;
+        return acc ? `${acc}; ${entry}` : entry; // Append with ';' if acc is not empty
+      }, ''); // Initial value is an empty string
+      console.log(result);;
+      return `{${result}}`
     default:
       return "";
   }
